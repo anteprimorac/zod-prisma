@@ -1,6 +1,6 @@
 on:
   release:
-    types: [created]
+    types: [published]
 
 name: Publish Package
 
@@ -47,12 +47,12 @@ jobs:
       - name: Fix package name
         run: 'node -e "const fs = require(\"fs\"); const path = require(\"path\"); const packageJson = require(\"./package.json\"); fs.writeFileSync(path.join(__dirname, \"package.json\"), JSON.stringify({ ...packageJson, name: \"@anteprimorac/zod-prisma\" }, null, 2));"'
 
-      - name: Install deps (with cache)
-        uses: bahmutov/npm-install@v1
+      - name: Install deps
+        run: yarn
 
       - name: Build
         run: yarn build
 
-      - run: yarn publish
+      - run: yarn publish --new-version ${{ github.event.release.tag_name }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
